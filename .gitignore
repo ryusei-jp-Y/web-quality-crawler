@@ -1,0 +1,28 @@
+node_modules/
+public/reports/
+public/ai-cache/
+logs/
+.env
+.env.local
+.DS_Store
+*.log
+npm-debug.log*
+
+# build artifacts (`npm run build:frontend` で生成)
+public/js/*.min.js
+public/css/*.min.css
+
+# 運用データ: UI (ドメイン/ページ追加等) から書き換わるので git 管理しない。
+# 初期値は config/targets.example.json をテンプレートとして配布し、
+# loadConfig が無ければ自動コピーする。
+config/targets.json
+config/targets.test.json
+
+# 運用データ: SQLite DB (設定 + 構造化レポートの正本)。永続ボリュームで管理。
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Claude Code の個人ローカル設定 (launch.json は共有するため ignore しない)
+.claude/settings.local.json

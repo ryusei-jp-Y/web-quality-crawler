@@ -1,0 +1,17 @@
+{
+  "id": "example",
+  "name": "Example",
+  "displayName": "Example Cloud",
+  "parentBrand": "Example Inc.",
+  "description": "サンプルブランド。ブランド参照型 AI ルール (logo-regulation / brand-guideline) のデモ用。実運用では自社ブランドの meta.json / *.md に差し替える。",
+  "preferredTerms": [
+    "Example Cloud",
+    "Example Cloud VPS",
+    "Example Cloud Hosting",
+    "Example Inc."
+  ],
+  "avoidTerms": [
+    "Example グループのみ",
+    "エグザンプル (カタカナ表記)"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "web-quality-crawler",
+  "version": "4.1.0",
+  "private": true,
+  "description": "SEO/LLMO/A11y/UX quality crawler (73 rules: 48 deterministic + 25 AI) with dashboard",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/server.js",
+    "start:local": "node --env-file=.env scripts/server.js",
+    "crawl": "node scripts/run.js",
+    "crawl:local": "node --env-file=.env scripts/run.js",
+    "build:frontend": "node scripts/build-frontend.js",
+    "prestart": "node scripts/build-frontend.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.90.0",
+    "better-sqlite3": "^12.11.1",
+    "cheerio": "^1.0.0",
+    "chrome-launcher": "^1.2.0",
+    "esbuild": "^0.24.2",
+    "express": "^4.21.1",
+    "lighthouse": "^12.3.0",
+    "playwright": "^1.48.0"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "domains": [
+    {
+      "id": "example-cloud",
+      "name": "Example Cloud",
+      "brand": "example",
+      "enabled": true,
+      "timeout": 30000,
+      "weights": {
+        "lh-performance": 0.05,
+        "lh-accessibility": 0.20,
+        "lh-best-practices": 0.10,
+        "lh-seo": 0.10,
+        "info": 0.15,
+        "text": 0.10,
+        "visual": 0.10,
+        "usability": 0.10,
+        "code": 0.10
+      },
+      "thresholds": {
+        "total": 80,
+        "info": 75,
+        "text": 80,
+        "visual": 75,
+        "usability": 75,
+        "code": 75
+      },
+      "ruleOptions": {
+        "semantic/div-ratio": {
+          "minRatio": 0.1
+        },
+        "readable/dom-text-volume": {
+          "minChars": 1500
+        },
+        "readable/image-text-alternative": {
+          "minAltLength": 10,
+          "maxShortAltRatio": 0.5
+        },
+        "perf/head-inline-size": {
+          "maxBytes": 10240
+        },
+        "perf/html-total-size": {
+          "maxBytes": 1048576
+        },
+        "gate/body-start-offset": {
+          "maxBytes": 28672
+        }
+      },
+      "pages": [
+        {
+          "id": "top",
+          "name": "TOP",
+          "url": "https://example.com/",
+          "enabled": true,
+          "devices": [
+            "pc",
+            "sp"
+          ]
+        }
+      ]
+    }
+  ]
+}
