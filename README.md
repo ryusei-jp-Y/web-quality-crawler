@@ -6,7 +6,15 @@ Web サイトの品質を **コード品質 / 情報設計 / テキスト品質 
 
 > 個人開発のポートフォリオ用プロジェクトです。Playwright / Lighthouse / Claude API / SQLite / Express を組み合わせ、「壊れずに回り続ける」ための設計判断（プロセス分離・直列実行・キャッシュ戦略）に重点を置いています。
 
-<!-- TODO: docs/ にダッシュボードのスクリーンショット / デモ GIF を追加する -->
+## スクリーンショット
+
+ページ詳細 — 総合スコア / 違反内訳 (Critical・Major・Minor・Passed) / カテゴリ別スコア / スコア推移:
+
+![ダッシュボード — ページ詳細](docs/screenshots/dashboard-detail.png)
+
+全サイトの現況一覧 (総合スコアは PC/SP 平均):
+
+![ダッシュボード — 全サイト現況](docs/screenshots/dashboard-overview.png)
 
 ---
 
