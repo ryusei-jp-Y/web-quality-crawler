@@ -312,12 +312,26 @@ domain に `"brand": "example"` を指定すると、そのドメインのペー
 
 ## デプロイ
 
-コンテナ (Docker) での常駐運用を想定しています。`npm start` を entrypoint に、任意の CI（git push → サーバへ同期 → コンテナ再起動）で反映します。
+Express が静的配信 + API + SPA を 1 プロセスで賄うため、コンテナは Node 単体で完結します（TLS は前段のリバースプロキシ / PaaS に任せる）。同梱の [`Dockerfile`](Dockerfile) はどのホストでも同じイメージで動きます。
 
-- `.env` はリポジトリに含めず、サーバ側で直接管理します（配布されるのは `.env.example` のみ）。
-- 設定変更時は `docker compose restart` では env_file を再読み込みしないため、`down → up -d` で再起動します。
-- SQLite DB (`data/`) は永続ボリュームに置いてください（デプロイ同期で揮発させない）。
-- メモリは Playwright Chromium + chrome-launcher Chromium の並走を見込み、コンテナに 3GB 程度を割り当てると安定します。
+### 自前サーバ / VPS (docker compose)
+
+```bash
+cp .env.example .env        # ANTHROPIC_API_KEY / ADMIN_ID / ADMIN_PASS 等を設定
+docker compose up -d --build
+# 前段のリバースプロキシ (Caddy / nginx / Traefik) で :3001 を TLS 終端して公開する
+```
+
+- **メモリ**: Playwright Chromium + Lighthouse 経由の Chromium が並走するため **2GB 以上（推奨 3GB）** を割り当てる。不足すると cgroup OOM でクロールが落ちる。
+- **永続化**: `data/`（SQLite 正本）と `public/reports/`（スクショ）を volume で永続化する。怠るとデプロイ毎にデータが消える。
+- **定期クロール**（任意）: ホストの cron 等で `docker compose exec web-quality-crawler npm run crawl`。
+
+### PaaS (Render / Fly.io / Railway 等)
+
+- Docker デプロイに対応した PaaS にそのまま載せられる。listen ポートはプラットフォームが注入する `PORT` を `server.js` が参照する。
+- **2GB 以上のインスタンス**を選ぶこと（無料枠の 512MB 級では Chromium/Lighthouse が OOM する）。
+- **永続ディスク**を `DB_PATH`（既定 `/app/data`）にマウントし、SQLite を揮発させない。
+- 環境変数: `ANTHROPIC_API_KEY`（AI 機能を使う場合）/ `ADMIN_ID` / `ADMIN_PASS`（**必ず変更**）。
 
 開発時の設計メモ・落とし穴は [CLAUDE.md](CLAUDE.md) を参照。
 

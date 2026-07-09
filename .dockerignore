@@ -1,0 +1,15 @@
+.git
+node_modules
+data
+public/reports
+public/ai-cache
+public/js/*.min.js
+public/css/*.min.css
+logs
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.local
+docs/screenshots
+.DS_Store

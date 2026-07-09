@@ -1,0 +1,27 @@
+# 自前サーバ / VPS 向け。TLS は前段のリバースプロキシ (Caddy / nginx / Traefik) で終端する想定。
+# 起動: cp .env.example .env  (ANTHROPIC_API_KEY / ADMIN_PASS 等を設定) → docker compose up -d --build
+services:
+  web-quality-crawler:
+    build: .
+    container_name: web-quality-crawler
+    ports:
+      - "3001:3001"          # 前段プロキシからこのポートへ転送
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Tokyo
+      - NODE_ENV=production
+    volumes:
+      # SQLite 正本 + レポート(スクショ) を永続化。デプロイ/再ビルドで揮発させない。
+      - ./data:/app/data
+      - ./public/reports:/app/public/reports
+    # Playwright Chromium + Lighthouse 経由 chrome-launcher Chromium の並走で ~2GB 必要。
+    # 余裕を見て 3g。足りないと cgroup OOM でクロールが落ちる。
+    mem_limit: 3g
+    mem_reservation: 512m
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+# 定期クロール(任意): ホストの cron 等で以下を叩く
+#   docker compose exec web-quality-crawler npm run crawl
