@@ -333,6 +333,21 @@ docker compose up -d --build
 - **永続ディスク**を `DB_PATH`（既定 `/app/data`）にマウントし、SQLite を揮発させない。
 - 環境変数: `ANTHROPIC_API_KEY`（AI 機能を使う場合）/ `ADMIN_ID` / `ADMIN_PASS`（**必ず変更**）。
 
+### GitHub Actions で自動デプロイ (VPS)
+
+同梱の [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) が、`main` への push で VPS に SSH → `git pull` → `docker compose up -d --build` を実行します（重いビルドは VPS 側で走るため Actions の消費時間はごく僅か）。
+
+リポジトリの **Settings → Secrets and variables → Actions** に以下を登録すると有効化されます（未設定のうちは自動スキップ）:
+
+| Secret | 内容 |
+|---|---|
+| `VPS_HOST` | VPS の公開 IP / ホスト名 |
+| `VPS_USER` | ログインユーザ (例: `root` またはデプロイ用ユーザ) |
+| `VPS_SSH_KEY` | 上記ユーザで入れる**秘密鍵**（公開鍵は VPS の `authorized_keys` に登録） |
+| `DEPLOY_PATH` | VPS 上にクローンしたこの repo のパス (例: `/root/apps/web-quality-crawler`) |
+
+初回のみ VPS 側で `git clone` と `.env` 準備を済ませておけば、以降は push だけで反映されます。
+
 開発時の設計メモ・落とし穴は [CLAUDE.md](CLAUDE.md) を参照。
 
 ## ライセンス

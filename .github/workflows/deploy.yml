@@ -1,0 +1,54 @@
+name: Deploy to VPS
+
+# main への push（と手動実行）で VPS に SSH し、git pull → 再ビルド → 再起動する。
+# 重いビルドは VPS 側で走るため、GitHub Actions の消費時間はごく僅か（実質無料枠内）。
+#
+# 事前に GitHub リポジトリの Settings → Secrets and variables → Actions に登録:
+#   VPS_HOST      … VPS の公開IP または ホスト名
+#   VPS_USER      … ログインユーザ (例: root もしくは deploy 用ユーザ)
+#   VPS_SSH_KEY   … 上記ユーザで入れる「秘密鍵」(公開鍵は VPS の authorized_keys に登録済みにする)
+#   DEPLOY_PATH   … VPS 上にクローンしたこの repo のパス (例: /root/apps/web-quality-crawler)
+# ※ Secrets 未設定のうちはデプロイ手順を自動スキップする（失敗させない）。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+    steps:
+      - name: Guard — Secrets 未設定ならスキップ
+        id: guard
+        run: |
+          if [ -n "$VPS_HOST" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::VPS の Secrets が未設定のためデプロイをスキップしました。"
+          fi
+
+      - name: Deploy over SSH
+        if: steps.guard.outputs.ready == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            echo "▶ pull"
+            git pull --ff-only
+            echo "▶ build & up"
+            docker compose up -d --build
+            echo "▶ cleanup"
+            docker image prune -f
+            echo "✅ deploy done"
