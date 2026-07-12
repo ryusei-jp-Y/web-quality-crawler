@@ -4020,3 +4020,36 @@ details.passed-audits[open] > summary { border-bottom: 1px solid var(--color-bor
   box-shadow: inset 0 2px 0 var(--primary-500, #3b82f6);
   background: var(--primary-bg);
 }
+
+/* =====================================================================
+   Reduced motion (OS の「視差効果を減らす」設定に追従)
+   方針: 装飾的なループ (オーロラ/シマー/パルス/breathe) は停止、
+         ゲージや chevron の transition は即座に完了、
+         登場アニメは移動を消して fade のみ、
+         スピナーだけは「処理中」の合図として回し続ける。
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  /* 装飾的なループアニメを停止 */
+  .aurora__blob,
+  .app-loader__pulse, .app-loader__ring, .app-loader__line,
+  .crawl-loader__pulse, .crawl-loader__dot,
+  .skeleton::after,
+  .crawling-banner, .crawl-loader__progress-fill::after,
+  .page-item--crawling::after,
+  .screenshot-modal__rect {
+    animation: none !important;
+  }
+
+  /* ゲージ・chevron / caret などの transition は即座に完了させる */
+  .lh-gauge__arc,
+  [class*="chevron"], [class*="caret"] {
+    transition-duration: 0.01ms !important;
+  }
+
+  /* 登場アニメは移動を消して fade のみ残す */
+  .modal, .toast, .modal-backdrop {
+    animation-duration: 0.01ms !important;
+  }
+
+  /* スピナー (.spin 系) はあえて残す — 処理中であることの合図のため */
+}
