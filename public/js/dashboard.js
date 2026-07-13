@@ -2169,7 +2169,7 @@ function renderHelpChangelog() {
           <li><strong>report.json を gzip 圧縮保存</strong> (<code>report.json.gz</code>): ストレージ ~5x 削減。Express 側で <code>Content-Encoding: gzip</code> ヘッダ付きで透過配信、クライアント変更不要</li>
           <li>旧 <code>report.json</code> 形式は自動フォールバックで読込互換維持</li>
           <li><strong>スクリーンショットを PNG → JPEG 80%</strong> に変更: 1 枚あたり ~80% サイズ減 (~5MB → ~1MB)、視認性は維持</li>
-          <li><strong>dashboard.js / dashboard.css を esbuild で minify</strong>: <code>npm run start</code> の prestart で自動生成、index.html は <code>.min.js</code> / <code>.min.css</code> を参照</li>
+          <li><strong>dashboard.js / dashboard.css を esbuild で minify</strong>: <code>pnpm run start</code> の prestart で自動生成、index.html は <code>.min.js</code> / <code>.min.css</code> を参照</li>
         </ul>
 
         <h4>${ICON.info}<span>その他改善</span></h4>
@@ -2346,7 +2346,7 @@ function renderHelpChangelog() {
       <h4>${ICON.info}<span>その他</span></h4>
       <ul>
         <li>旧レポート互換: <code>mainCategories</code> が無い古いレポートでもサブスコアから単純平均でフォールバック算出</li>
-        <li>Lighthouse を Docker コンテナ (node:22 + Playwright 構成) で動作させるため、chrome-launcher に Playwright の Chromium を流用する解決処理を追加</li>
+        <li>Lighthouse を Docker コンテナ (node:24 + Playwright 構成) で動作させるため、chrome-launcher に Playwright の Chromium を流用する解決処理を追加</li>
       </ul>
 
       </div>
@@ -2507,7 +2507,7 @@ function renderHelpCrawl() {
     <section class="help-section">
       <h3>実行トリガー</h3>
       <ul>
-        <li><strong>自動定期実行</strong>: 平日9時 (JST)、ホスト cron → <code>npm run crawl</code></li>
+        <li><strong>自動定期実行</strong>: 平日9時 (JST)、ホスト cron → <code>pnpm run crawl</code></li>
         <li><strong>手動実行</strong>: メインヘッダーの「再クロール」ボタン、または空状態の「クロールを実行」ボタン</li>
         <li><strong>ページ追加時</strong>: 新規ページ追加と同時に初回クロールを自動開始</li>
       </ul>

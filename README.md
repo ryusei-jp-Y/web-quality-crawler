@@ -42,7 +42,7 @@ Web サイトの品質を **コード品質 / 情報設計 / テキスト品質 
 
 ## 技術スタック
 
-Node.js 20 / Playwright / Cheerio / Lighthouse / chrome-launcher / Express / better-sqlite3 / esbuild / Anthropic Claude API
+Node.js 24 / Playwright / Cheerio / Lighthouse / chrome-launcher / Express / better-sqlite3 / esbuild / Anthropic Claude API
 
 ---
 
@@ -92,15 +92,15 @@ Node.js 20 / Playwright / Cheerio / Lighthouse / chrome-launcher / Express / bet
 
 ## 必要要件
 
-- Node.js 20 以上
+- Node.js 24.18.0
 - Playwright が Chromium をダウンロードできるネットワーク
 - (AI 機能を使う場合) Anthropic API キー
 
 ## セットアップ
 
 ```bash
-npm ci
-npx playwright install --with-deps chromium
+pnpm install --frozen-lockfile
+pnpm exec playwright install --with-deps chromium
 cp .env.example .env    # ANTHROPIC_API_KEY 等を設定
 ```
 
@@ -109,7 +109,7 @@ cp .env.example .env    # ANTHROPIC_API_KEY 等を設定
 ### ダッシュボードサーバ (Express / port 3001)
 
 ```bash
-npm run start:local   # .env 読み込み + node scripts/server.js
+pnpm run start:local  # .env 読み込み + node scripts/server.js
 # ブラウザで http://127.0.0.1:3001/
 ```
 
@@ -118,8 +118,8 @@ npm run start:local   # .env 読み込み + node scripts/server.js
 ### クローラー (単発実行)
 
 ```bash
-npm run crawl:local                                         # 既定設定で実行
-CONFIG_PATH=config/targets.example.json npm run crawl:local # サンプル設定で実行
+pnpm run crawl:local                                         # 既定設定で実行
+CONFIG_PATH=config/targets.example.json pnpm run crawl:local # サンプル設定で実行
 ```
 
 クローラー結果は `public/reports/<timestamp>/` に出力されます。ダッシュボードからは UI 操作で個別ページをクロールすることも可能です。
@@ -204,6 +204,14 @@ public/reports/<timestamp>/
 | `GET /api/export/latest.md` | 最新 run の全結果 Markdown |
 
 管理者限定操作（ドメイン/ページの追加・削除・再クロール等）は簡易認証で保護されます。資格情報は `ADMIN_ID` / `ADMIN_PASS`（既定 `admin` / `change-me`）で、**公開運用時は必ず変更**してください。
+
+## 確認コマンド
+
+```bash
+pnpm run check
+```
+
+`check` は全 JavaScript ファイルの構文チェックとフロントエンドビルドを実行します。
 
 ## 環境変数
 
@@ -324,7 +332,7 @@ docker compose up -d --build
 
 - **メモリ**: Playwright Chromium + Lighthouse 経由の Chromium が並走するため **2GB 以上（推奨 3GB）** を割り当てる。不足すると cgroup OOM でクロールが落ちる。
 - **永続化**: `data/`（SQLite 正本）と `public/reports/`（スクショ）を volume で永続化する。怠るとデプロイ毎にデータが消える。
-- **定期クロール**（任意）: ホストの cron 等で `docker compose exec web-quality-crawler npm run crawl`。
+- **定期クロール**（任意）: ホストの cron 等で `docker compose exec web-quality-crawler pnpm run crawl`。
 
 ### PaaS (Render / Fly.io / Railway 等)
 

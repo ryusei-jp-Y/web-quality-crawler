@@ -24,4 +24,4 @@ services:
       - no-new-privileges:true
 
 # 定期クロール(任意): ホストの cron 等で以下を叩く
-#   docker compose exec web-quality-crawler npm run crawl
+#   docker compose exec web-quality-crawler pnpm run crawl

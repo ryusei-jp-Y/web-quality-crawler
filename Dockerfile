@@ -1,6 +1,6 @@
 # Web Quality Crawler — 単一プロセス (Express が静的配信 + API + SPA を兼ねる)。
 # TLS / リバースプロキシはホスト側 or PaaS に任せる設計。
-FROM node:22-bookworm
+FROM node:24.18.0-bookworm
 
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 依存は package だけ先に COPY してレイヤキャッシュを効かせる
 # (better-sqlite3 はプリビルドバイナリを取得。取得できない環境では build-essential python3 を追加)
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --prod --frozen-lockfile
 
 # Playwright Chromium 本体 + OS 依存ライブラリをビルド時に導入
-RUN npx playwright install --with-deps chromium
+RUN pnpm exec playwright install --with-deps chromium
 
 # アプリ本体
 COPY . .

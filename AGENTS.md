@@ -18,16 +18,16 @@
 ## ローカル開発のクイックスタート
 
 ```bash
-npm ci
-npx playwright install --with-deps chromium
+pnpm install --frozen-lockfile
+pnpm exec playwright install --with-deps chromium
 cp .env.example .env             # ANTHROPIC_API_KEY を入れる
-npm run start:local              # http://127.0.0.1:3001/
+pnpm run start:local             # http://127.0.0.1:3001/
 
 # クローラー単発実行 (テスト config 使用)
-CONFIG_PATH=config/targets.test.json npm run crawl:local
+CONFIG_PATH=config/targets.test.json pnpm run crawl:local
 ```
 
-**テストランナーは存在しない**。動作確認は基本「ローカルサーバを立てて UI を触る」+「`node --check` で構文チェック」の 2 段。新規ルールを追加したら `npm run crawl:local` で実際にクロールを通すこと。
+**テストランナーは存在しない**。動作確認は基本「ローカルサーバを立てて UI を触る」+「`node --check` で構文チェック」の 2 段。新規ルールを追加したら `pnpm run crawl:local` で実際にクロールを通すこと。
 
 ---
 
@@ -159,7 +159,7 @@ rules/                     全 73 ルール
 1. `rules/<category>/<rule-id>.js` を作成 (テンプレートは [README.md ルールインターフェース](README.md))
 2. `rules/index.js` の対応する import に追加
 3. `deterministicRules` または `aiRules` 配列に登録
-4. `npm run crawl:local` で実際にクロールして `report.json` に出ることを確認
+4. `pnpm run crawl:local` で実際にクロールして `report.json` に出ることを確認
 5. UI のヘルプモーダル (`public/index.html`) は自動で全ルールを列挙する (手動更新不要)
 
 AI ルールの場合:
@@ -192,7 +192,7 @@ AI ルールの場合:
 2. **Node が死んでいる** → `sudo docker logs --tail 200 <container>` で V8 OOM / uncaught exception 探す
 3. **AI 機能だけ動かない** → `/api/ai/status` 叩く / `ANTHROPIC_API_KEY` 確認
 4. **クロール途中で止まる** → `AI_PREFETCH=critical` か `none` に下げる / `RULE_AI_CONCURRENCY` を下げる
-5. **LH が出ない** → コンテナ内 `npx playwright list` で chromium のパス確認
+5. **LH が出ない** → コンテナ内 `pnpm exec playwright list` で chromium のパス確認
 
 ---
 

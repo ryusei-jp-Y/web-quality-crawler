@@ -3,8 +3,20 @@
   "version": "4.1.0",
   "private": true,
   "description": "SEO/LLMO/A11y/UX quality crawler (73 rules: 48 deterministic + 25 AI) with dashboard",
+  "packageManager": "pnpm@11.12.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=24.18.0 <27"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.18.0",
+      "onFail": "download"
+    }
+  },
+  "volta": {
+    "node": "24.18.0",
+    "pnpm": "11.12.0"
   },
   "type": "module",
   "scripts": {
@@ -12,7 +24,11 @@
     "start:local": "node --env-file=.env scripts/server.js",
     "crawl": "node scripts/run.js",
     "crawl:local": "node --env-file=.env scripts/run.js",
+    "build": "node scripts/build-frontend.js",
     "build:frontend": "node scripts/build-frontend.js",
+    "lint": "node scripts/check-syntax.js",
+    "typecheck": "pnpm run lint",
+    "check": "pnpm run lint && pnpm run build",
     "prestart": "node scripts/build-frontend.js"
   },
   "dependencies": {
@@ -24,5 +40,6 @@
     "express": "^4.21.1",
     "lighthouse": "^12.3.0",
     "playwright": "^1.48.0"
-  }
+  },
+  "devDependencies": {}
 }
