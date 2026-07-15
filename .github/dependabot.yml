@@ -1,0 +1,28 @@
+# Dependabot: 依存を週次でまとめて更新 PR にする（どのプロジェクトにも流用可）。
+# - npm      : package.json / pnpm-lock.yaml の依存
+# - github-actions : ワークフローで使う action のバージョン
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    # パッチ/マイナーはまとめて 1 PR に（レビュー負荷を下げる）。メジャーは個別に出す。
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci(deps)"

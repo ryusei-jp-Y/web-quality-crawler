@@ -1,6 +1,8 @@
 name: Deploy to VPS
 
-# main への push（と手動実行）で VPS に SSH し、git pull → 再ビルド → 再起動する。
+# CI (ci.yml) が main で成功したときだけ VPS に SSH し、git pull → 再ビルド → 再起動する。
+# 「CI が落ちるコードをデプロイしてしまう」事故を防ぐため、push 直トリガではなく
+# workflow_run（CI 完了イベント）を起点にしてゲートしている。
 # 重いビルドは VPS 側で走るため、GitHub Actions の消費時間はごく僅か（実質無料枠内）。
 #
 # 事前に GitHub リポジトリの Settings → Secrets and variables → Actions に登録:
@@ -11,8 +13,12 @@ name: Deploy to VPS
 # ※ Secrets 未設定のうちはデプロイ手順を自動スキップする（失敗させない）。
 
 on:
-  push:
+  # CI ワークフローが main ブランチで完了したら発火（成功判定は下の if で行う）
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
+  # 手動デプロイも許可（CI を通さず緊急で回したいとき）
   workflow_dispatch: {}
 
 concurrency:
@@ -22,6 +28,10 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # workflow_run の場合は CI が success のときのみ。手動実行は無条件で許可。
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' ||
+          github.event.workflow_run.conclusion == 'success' }}
     env:
       VPS_HOST: ${{ secrets.VPS_HOST }}
     steps:
