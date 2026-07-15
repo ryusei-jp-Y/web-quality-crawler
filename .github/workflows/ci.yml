@@ -6,6 +6,12 @@ on:
     branches:
       - main
 
+# 同一ブランチで新しい push があれば進行中の古いランを打ち切る（Actions 分の節約）。
+# main は打ち切らない（デプロイ判定の元になる workflow_run を失わないため）。
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   check:
     runs-on: ubuntu-latest
