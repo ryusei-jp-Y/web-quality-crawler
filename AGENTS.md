@@ -27,7 +27,7 @@ pnpm run start:local             # http://127.0.0.1:3001/
 CONFIG_PATH=config/targets.test.json pnpm run crawl:local
 ```
 
-**テストランナーは存在しない**。動作確認は基本「ローカルサーバを立てて UI を触る」+「`node --check` で構文チェック」の 2 段。新規ルールを追加したら `pnpm run crawl:local` で実際にクロールを通すこと。
+**テストランナーは存在しない**。動作確認は基本「ローカルサーバを立てて UI を触る」+「`pnpm run lint` (= `scripts/check-syntax.js` で全 JS を構文チェック) 」の 2 段。ビルドまで通したいなら `pnpm run check` (lint + フロントビルド)。新規ルールを追加したら `pnpm run crawl:local` で実際にクロールを通すこと。
 
 ---
 
