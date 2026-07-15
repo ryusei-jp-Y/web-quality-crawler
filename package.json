@@ -32,14 +32,14 @@
     "prestart": "node scripts/build-frontend.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.90.0",
+    "@anthropic-ai/sdk": "^0.111.0",
     "better-sqlite3": "^12.11.1",
     "cheerio": "^1.0.0",
     "chrome-launcher": "^1.2.0",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.28.1",
     "express": "^4.21.1",
     "lighthouse": "^12.3.0",
-    "playwright": "^1.48.0"
+    "playwright": "^1.61.1"
   },
   "devDependencies": {}
 }
