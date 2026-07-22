@@ -36,7 +36,7 @@ Web サイトの品質を **コード品質 / 情報設計 / テキスト品質 
 - **Lighthouse は同一プロセス内 mutex** — chrome-launcher が Playwright の Chromium executablePath を再利用し、二重起動を防ぐ。
 - **重い AI 呼び出しも子プロセスに隔離** — `/api/prioritize` は Anthropic SDK のレスポンスバッファ + `JSON.parse` で V8 ヒープを膨らませて親ごと落ちた経緯があり、使い捨て worker に分離。親の Express は 500 を返して生存を続ける。
 - **AI コストを 2 段でキャッシュ** — 共通評価フレームワークに Anthropic Prompt Caching（`cache_control: ephemeral`）を適用しつつ、評価結果・修正提案はディスクにも sha256 キーでキャッシュ。ヒット時は API を呼ばずコスト 0。
-- **決定的 47 + AI 25 の二層評価** — 再現性が要る項目はコードで、判断が要る項目は LLM で。両者を同じ重み付けスコアに合流させる。
+- **決定的 48 + AI 25 の二層評価** — 再現性が要る項目はコードで、判断が要る項目は LLM で。両者を同じ重み付けスコアに合流させる。
 - **設定・レポートの正本は SQLite** — 画像はファイル、構造化データは DB。ダッシュボードからの編集も DB に書く。
 - **ゲート条件で早期スキップ** — `body` 開始位置が 28KB を超えるページは以降の評価をスキップし、無駄な処理と誤検知を避ける。
 
@@ -322,6 +322,12 @@ domain に `"brand": "example"` を指定すると、そのドメインのペー
 
 Express が静的配信 + API + SPA を 1 プロセスで賄うため、コンテナは Node 単体で完結します（TLS は前段のリバースプロキシ / PaaS に任せる）。同梱の [`Dockerfile`](Dockerfile) はどのホストでも同じイメージで動きます。
 
+### ローカル本体 + Cloudflare Tunnel
+
+このプロジェクトの公開運用では、ローカルの Express dashboard を本体として起動し、Cloudflare Tunnel 経由で公開します。公開 hostname は Cloudflare Access で保護します。
+
+詳細は [`docs/tunnel.md`](docs/tunnel.md) を参照してください。
+
 ### 自前サーバ / VPS (docker compose)
 
 ```bash
@@ -341,22 +347,6 @@ docker compose up -d --build
 - **永続ディスク**を `DB_PATH`（既定 `/app/data`）にマウントし、SQLite を揮発させない。
 - 環境変数: `ANTHROPIC_API_KEY`（AI 機能を使う場合）/ `ADMIN_ID` / `ADMIN_PASS`（**必ず変更**）。
 
-### GitHub Actions で自動デプロイ (VPS)
-
-同梱の [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) が、`main` への push で VPS に SSH → `git pull` → `docker compose up -d --build` を実行します（重いビルドは VPS 側で走るため Actions の消費時間はごく僅か）。
-
-リポジトリの **Settings → Secrets and variables → Actions** に以下を登録すると有効化されます（未設定のうちは自動スキップ）:
-
-| Secret | 内容 |
-|---|---|
-| `VPS_HOST` | VPS の公開 IP / ホスト名 |
-| `VPS_USER` | ログインユーザ (例: `root` またはデプロイ用ユーザ) |
-| `VPS_SSH_KEY` | 上記ユーザで入れる**秘密鍵**（公開鍵は VPS の `authorized_keys` に登録） |
-| `DEPLOY_PATH` | VPS 上にクローンしたこの repo のパス (例: `/root/apps/web-quality-crawler`) |
-
-初回のみ VPS 側で `git clone` と `.env` 準備を済ませておけば、以降は push だけで反映されます。
-
-開発時の設計メモ・落とし穴は [CLAUDE.md](CLAUDE.md) を参照。
 
 ## ライセンス
 

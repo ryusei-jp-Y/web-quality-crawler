@@ -3,10 +3,40 @@ public/reports/
 public/ai-cache/
 logs/
 .env
-.env.local
+.env.*
+!.env.example
+.envrc
+.direnv/
 .DS_Store
+._*
+.AppleDouble
+Icon?
+Thumbs.db
 *.log
 npm-debug.log*
+
+# local caches / tool state
+.cache/
+.tmp/
+tmp/
+coverage/
+test-results/
+playwright-report/
+*.trace.zip
+.nyc_output/
+*.heapsnapshot
+*.pid
+*.pid.lock
+core
+core.*
+
+# editor / IDE state
+.vscode/
+.idea/
+.history/
+*.swp
+*.swo
+*~
 
 # build artifacts (`npm run build:frontend` で生成)
 public/js/*.min.js
@@ -16,7 +46,13 @@ public/css/*.min.css
 # 初期値は config/targets.example.json をテンプレートとして配布し、
 # loadConfig が無ければ自動コピーする。
 config/targets.json
-config/targets.test.json
+config/targets.*.json
+!config/targets.example.json
+
+# brand/customer-specific assets; keep only the public example
+config/brands/*
+!config/brands/example/
+!config/brands/example/**
 
 # 運用データ: SQLite DB (設定 + 構造化レポートの正本)。永続ボリュームで管理。
 data/
@@ -24,5 +60,31 @@ data/
 *.db-shm
 *.db-wal
 
-# Claude Code の個人ローカル設定 (launch.json は共有するため ignore しない)
-.claude/settings.local.json
+# local assistant / agent state
+.claude/
+.codex/
+.agents/
+AGENTS.md
+CLAUDE.md
+
+# local tunnel credentials/config if copied into the repo by mistake
+.cloudflared/
+cert.pem
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+.ssh/
+id_rsa
+id_ecdsa
+id_ed25519
+.npmrc
+credentials.json
+*-credentials.json
+service-account*.json
+
+# obsolete/private operation notes
+docs/deploy-*.md
+.github/workflows/deploy*.yml
